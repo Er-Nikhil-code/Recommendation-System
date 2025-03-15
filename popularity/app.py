@@ -6,14 +6,21 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 st.set_page_config(
-    page_title="Popularity-based Recommendation",  # Appears on the browser tab
+    page_title="Popularity-based Book Recommendation",
     page_icon="🚀",
-    layout="centered",
+    layout="wide",
 )
 
 # Title of the webpage
-st.title("Popularity-based Recommendation")
-st.write("This app is designed to provide the top 50 books to the user.")
+st.markdown(
+    """
+    <div style='text-align: center; padding: 10px;'>
+        <h1 style='color: #4CAF50;'>🚀 Popularity-based Book Recommendation 📚</h1>
+        <p style='font-size: 18px;'>Get the top 50 most popular books based on user ratings!</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 try:
     # creating dataframes from .csv files
@@ -43,27 +50,28 @@ try:
 
     # displaying top 50 books in streamlit
     for idx, row in enumerate(popular_df.iterrows(), start=1):
-        cols = st.columns([1, 2, 6])  # Adjust column widths for layout
+        # Create a card-like box for each book
+        with st.container():
+            cols = st.columns([1, 2, 6])  # Adjust column widths for layout
+            
+            # Rank number
+            with cols[0]:
+                st.markdown(f"<h3 style='color: #FF5733;'>#{idx}</h3>", unsafe_allow_html=True)
 
-        # Rank number
-        with cols[0]:
-            st.markdown(f"**#{idx}**")  # Displaying 1, 2, 3, 4, ...
+            # Book cover image
+            with cols[1]:
+                try:
+                    st.image(row[1]['Image-URL-S'], width=120)
+                except:
+                    st.image("https://via.placeholder.com/100", width=120)  # Fallback image
 
-        # Book cover image
-        with cols[1]:
-            try:
-                st.image(row[1]['Image-URL-S'], width=100)
-            except:
-                st.image("https://via.placeholder.com/100", width=100)  # Fallback image
-
-        # Book details
-        with cols[2]:
-            st.markdown(f"### {row[1]['Book-Title']}")
-            st.markdown(f"**Author:** {row[1]['Book-Author']}")
-            st.markdown(f"**Average Rating:** {row[1]['avg_rating']:.2f} ⭐")
-            st.markdown(f"**Number of Ratings:** {row[1]['num_ratings']}")
-
-        st.markdown("---")  # Separator line
+            # Book details
+            with cols[2]:
+                st.markdown(f"### 🌟 {row[1]['Book-Title']}")
+                st.markdown(f"**✒️ Author:** `{row[1]['Book-Author']}`")
+                st.markdown(f"**⭐ Average Rating:** `{row[1]['avg_rating']:.2f}`")
+                st.markdown(f"**👥 Number of Ratings:** `{row[1]['num_ratings']}`")
+                st.markdown("---")  # Separator line
 
 except Exception as e:
-    st.error(f"An error occurred: {str(e)}")
+    st.error(f"❌ An error occurred: {str(e)}")
